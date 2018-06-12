@@ -19,15 +19,11 @@ export class PopupModelProvider implements IPopupModelProvider {
             const node = element as DependencyGraphNodeSchema;
             const titleClass = 'sprotty-popup-title';
 
-            let versions = '';
-            if (node.versions.length > 0)
-                versions = `<span class="popup-info-version">${node.versions.join(', ')}</span>`;
-
             let title: string;
             if (node.url)
-                title = `<a href="${node.url}">${node.name}</a>${versions}`;
+                title = `<a href="${node.url}">${node.name}</a>`;
             else
-                title = `${node.name}${versions}`;
+                title = 'node.name';
 
             let bodyClass = 'sprotty-popup-body';
             if (node.error)

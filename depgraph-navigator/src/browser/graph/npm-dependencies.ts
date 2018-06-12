@@ -131,7 +131,14 @@ export class NpmDependencyGraphGenerator implements IGraphGenerator {
                 id: `dependency:${node.name}>${dep}`,
                 optional,
                 sourceId: node.id,
-                targetId: depNode.id
+                targetId: depNode.id,
+                children: [
+                    <SLabelSchema>{
+                        type: 'edge-label',
+                        id: `dependency:${node.name}>${dep}:${dependencies[dep]}`,
+                        text: dependencies[dep]
+                    }
+                ]
             };
             if (!this.index.contains(depEdge)) {
                 this.edges.push(depEdge);

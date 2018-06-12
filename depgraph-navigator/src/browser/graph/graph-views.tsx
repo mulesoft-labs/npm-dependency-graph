@@ -9,7 +9,9 @@
 
 import * as snabbdom from 'snabbdom-jsx';
 import { VNode } from "snabbdom/vnode";
-import { IView, RenderingContext, PolylineEdgeView, Point, toDegrees, angleOfPoint, maxDistance } from "sprotty/lib";
+import {
+    IView, RenderingContext, PolylineEdgeView, Point, toDegrees, angleOfPoint, maxDistance, SLabel
+} from "sprotty/lib";
 import { DependencyGraphNode, DependencyGraphEdge } from './graph-model';
 
 const JSX = {createElement: snabbdom.svg};
@@ -58,5 +60,15 @@ export class DependencyEdgeView extends PolylineEdgeView {
             <path class-arrow={true} d={`M -1.5,0 L ${this.arrowLength},-${this.arrowWidth / 2} L ${this.arrowLength},${this.arrowWidth / 2} Z`}
                   transform={`rotate(${toDegrees(angleOfPoint({ x: p1.x - p2.x, y: p1.y - p2.y }))} ${p2.x} ${p2.y}) translate(${p2.x} ${p2.y})`}/>
         ];
+    }
+}
+
+export class EdgeLabelView implements IView {
+    render(label: Readonly<SLabel>, context: RenderingContext): VNode {
+        return <g class-sprotty-label={true}>
+            <rect x="0" y="0"
+                  width={Math.max(label.size.width, 0)} height={Math.max(label.size.height, 0)}></rect>
+            <text>{label.text}</text>
+        </g>;
     }
 }

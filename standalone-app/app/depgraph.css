@@ -36,6 +36,16 @@
     fill: #777;
 }
 
+.sprotty-edge > .sprotty-label {
+    fill: #fff;
+    opacity: 0.5;
+}
+
+.sprotty-edge > .sprotty-label > text {
+    fill: #aaa;
+    font-size: 10pt;
+}
+
 .sprotty-edge.optional {
     fill: none;
     stroke: #bbb;

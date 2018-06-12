@@ -46,7 +46,8 @@ export class ElkGraphLayout implements IModelLayoutEngine {
         });
     }
 
-    protected transformToElk(smodel: SModelElementSchema, index: SModelIndex<SModelElementSchema>): ElkGraphElement {
+    protected transformToElk(smodel: SModelElementSchema, index: SModelIndex<SModelElementSchema>,
+            parent?: SModelElementSchema): ElkGraphElement {
         switch (smodel.type) {
             case 'graph': {
                 const sgraph = smodel as SGraphSchema;
@@ -55,10 +56,10 @@ export class ElkGraphLayout implements IModelLayoutEngine {
                     layoutOptions: this.graphOptions(sgraph),
                     children: sgraph.children
                         .filter(c => c.type === 'node' && this.filterNode(c as SNodeSchema))
-                        .map(c => this.transformToElk(c, index)) as ElkNode[],
+                        .map(c => this.transformToElk(c, index, sgraph)) as ElkNode[],
                     edges: sgraph.children
                         .filter(c => c.type === 'edge' && this.filterEdge(c as SEdgeSchema, index))
-                        .map(c => this.transformToElk(c, index)) as ElkEdge[]
+                        .map(c => this.transformToElk(c, index, sgraph)) as ElkEdge[]
                 };
             }
             case 'node': {
@@ -67,13 +68,13 @@ export class ElkGraphLayout implements IModelLayoutEngine {
                 if (snode.children) {
                     elkNode.children = snode.children
                         .filter(c => c.type === 'node' && this.filterNode(c as SNodeSchema))
-                        .map(c => this.transformToElk(c, index)) as ElkNode[];
+                        .map(c => this.transformToElk(c, index, snode)) as ElkNode[];
                     elkNode.edges = snode.children
                         .filter(c => c.type === 'edge' && this.filterEdge(c as SEdgeSchema, index))
-                        .map(c => this.transformToElk(c, index)) as ElkEdge[];
+                        .map(c => this.transformToElk(c, index, snode)) as ElkEdge[];
                     elkNode.labels = snode.children
                         .filter(c => c.type === 'label')
-                        .map(c => this.transformToElk(c, index)) as ElkLabel[];
+                        .map(c => this.transformToElk(c, index, snode)) as ElkLabel[];
                 }
                 this.transformShape(elkNode, snode);
                 return elkNode;
@@ -87,8 +88,8 @@ export class ElkGraphLayout implements IModelLayoutEngine {
                 };
                 if (sedge.children) {
                     elkEdge.labels = sedge.children
-                        .filter(c => c.type === 'label')
-                        .map(c => this.transformToElk(c, index)) as ElkLabel[];
+                        .filter(c => c.type === 'edge-label')
+                        .map(c => this.transformToElk(c, index, sedge)) as ElkLabel[];
                 }
                 const points = sedge.routingPoints;
                 if (points && points.length >= 2) {
@@ -98,9 +99,14 @@ export class ElkGraphLayout implements IModelLayoutEngine {
                 }
                 return elkEdge;
             }
-            case 'label': {
+            case 'label':
+            case 'edge-label': {
                 const slabel = smodel as SLabelSchema;
-                const elkLabel: ElkLabel = { id: slabel.id, text: slabel.text };
+                const elkLabel: ElkLabel = {
+                    id: slabel.id,
+                    layoutOptions: this.labelOptions(slabel, parent),
+                    text: slabel.text
+                };
                 this.transformShape(elkLabel, slabel);
                 return elkLabel;
             }
@@ -131,6 +137,15 @@ export class ElkGraphLayout implements IModelLayoutEngine {
         }
     }
 
+    protected labelOptions(slabel: SLabelSchema, parent?: SModelElementSchema): LayoutOptions {
+        if (parent && parent.type === 'edge')
+            return {
+                'elk.edgeLabels.inline': 'true'
+            }
+        else
+            return {}
+    }
+
     protected transformShape(elkShape: ElkShape, sshape: SShapeElementSchema): void {
         if (sshape.position) {
             elkShape.x = sshape.position.x;
@@ -157,6 +172,14 @@ export class ElkGraphLayout implements IModelLayoutEngine {
                 const sedge = index.getById(elkEdge.id);
                 if (sedge && sedge.type === 'edge') {
                     this.applyEdge(sedge as SEdgeSchema, elkEdge);
+                }
+                if (elkEdge.labels) {
+                    for (const elkLabel of elkEdge.labels) {
+                        const slabel = index.getById(elkLabel.id);
+                        if (slabel && slabel.type === 'edge-label') {
+                            this.applyShape(slabel as SLabelSchema, elkLabel);
+                        }
+                    }
                 }
             }
         }

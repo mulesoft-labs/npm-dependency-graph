@@ -18,7 +18,7 @@ import { DependencyGraphNode, DependencyGraphEdge } from './graph-model';
 import { IGraphGenerator } from './graph-generator';
 import { DepGraphModelSource } from './model-source';
 import { NpmDependencyGraphGenerator } from './npm-dependencies';
-import { DependencyNodeView, DependencyEdgeView } from './graph-views';
+import { DependencyNodeView, DependencyEdgeView, EdgeLabelView } from './graph-views';
 import { PopupModelProvider } from './popup-info';
 import { ElkGraphLayout } from './graph-layout';
 import { DependencyGraphFilter } from './graph-filter';
@@ -38,6 +38,7 @@ export default (additionalBindings?: interfaces.ContainerModuleCallBack) => {
         configureModelElement(context, 'node', DependencyGraphNode, DependencyNodeView);
         configureModelElement(context, 'edge', DependencyGraphEdge, DependencyEdgeView);
         configureModelElement(context, 'label', SLabel, SLabelView);
+        configureModelElement(context, 'edge-label', SLabel, EdgeLabelView);
         configureModelElement(context, 'compartment', SCompartment, SCompartmentView);
         configureModelElement(context, 'html', HtmlRoot, HtmlRootView);
         configureModelElement(context, 'pre-rendered', PreRenderedElement, PreRenderedView);
