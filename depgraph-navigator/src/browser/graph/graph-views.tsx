@@ -32,6 +32,7 @@ export class DependencyNodeView implements IView {
 export class DependencyEdgeView extends PolylineEdgeView {
     arrowLength = 10;
     arrowWidth = 8;
+    labelOffset = 20;
 
     render(edge: Readonly<DependencyGraphEdge>, context: RenderingContext): VNode {
         const route = edge.route();
@@ -47,16 +48,44 @@ export class DependencyEdgeView extends PolylineEdgeView {
     }
 
     protected renderAdditionals(edge: DependencyGraphEdge, segments: Point[], context: RenderingContext): VNode[] {
+        return [
+            this.renderArrow(edge, segments),
+            this.renderLabel(edge, segments)
+        ];
+    }
+
+    protected renderArrow(edge: DependencyGraphEdge, segments: Point[]): VNode {
+        const width = this.arrowWidth;
+        const length = this.arrowLength;
         const p2 = segments[segments.length - 1];
         let p1: Point;
         let index = segments.length - 2;
         do {
             p1 = segments[index];
             index--;
-        } while (index >= 0 && maxDistance(p1, p2) < this.arrowLength);
-        return [
-            <path class-arrow={true} d={`M -1.5,0 L ${this.arrowLength},-${this.arrowWidth / 2} L ${this.arrowLength},${this.arrowWidth / 2} Z`}
-                  transform={`rotate(${toDegrees(angleOfPoint({ x: p1.x - p2.x, y: p1.y - p2.y }))} ${p2.x} ${p2.y}) translate(${p2.x} ${p2.y})`}/>
-        ];
+        } while (index >= 0 && maxDistance(p1, p2) < length);
+        const angle = angleOfPoint({ x: p1.x - p2.x, y: p1.y - p2.y });
+        return <path class-arrow={true} d={`M -1.5,0 L ${length},-${width / 2} L ${length},${width / 2} Z`}
+                  transform={`rotate(${toDegrees(angle)} ${p2.x} ${p2.y}) translate(${p2.x} ${p2.y})`}/>;
     }
+
+    protected renderLabel(edge: DependencyGraphEdge, segments: Point[]): VNode {
+        const offset = this.labelOffset;
+        let p1, p2: Point;
+        let index = segments.length - 1;
+        do {
+            p2 = segments[index];
+            p1 = segments[index - 1];
+            index--;
+        } while (index > 0 && maxDistance(p1, p2) < offset);
+        const angle = angleOfPoint({ x: p1.x - p2.x, y: p1.y - p2.y });
+        const anchor: Point = {
+            x: p2.x + Math.cos(angle) * offset,
+            y: p2.y + Math.sin(angle) * offset
+        };
+        // if (angle >= Math.PI / 2)
+        //     angle -= Math.PI;
+        return <text transform={`rotate(${toDegrees(angle)} ${anchor.x} ${anchor.y}) translate(${anchor.x} ${anchor.y})`}>{edge.version}</text>
+    }
+
 }

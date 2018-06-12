@@ -44,6 +44,7 @@ export class DependencyGraphNode extends RectangularNode {
 
 export interface DependencyGraphEdgeSchema extends SEdgeSchema {
     optional?: boolean
+    version?: string
 }
 
 export function isEdge(element?: SModelElementSchema): element is DependencyGraphEdgeSchema {
@@ -52,6 +53,7 @@ export function isEdge(element?: SModelElementSchema): element is DependencyGrap
 
 export class DependencyGraphEdge extends SEdge {
     optional: boolean = false;
+    version: string = '';
 
     constructor() {
         super();

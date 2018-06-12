@@ -130,6 +130,7 @@ export class NpmDependencyGraphGenerator implements IGraphGenerator {
                 type: 'edge',
                 id: `dependency:${node.name}>${dep}`,
                 optional,
+                version: dependencies[dep],
                 sourceId: node.id,
                 targetId: depNode.id
             };
