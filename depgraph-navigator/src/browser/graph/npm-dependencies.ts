@@ -14,7 +14,7 @@ import { IGraphGenerator } from "./graph-generator";
 import { DependencyGraphNodeSchema, DependencyGraphEdgeSchema } from "./graph-model";
 import { PackageMetadata, VersionMetadata } from "./registry-metadata";
 
-export const REGISTRY_URL = 'https://registry.npmjs.org';
+export const REGISTRY_URL = 'http://localhost:8081/api/index';
 export const WEBSITE_URL = 'https://www.npmjs.com';
 
 @injectable()

@@ -50,7 +50,7 @@ jQuery(() => {
     // Set up the package input field with autocomplete
     const SEARCH_SIZE = 12;
     packageInput.autocomplete({
-        serviceUrl: REGISTRY_URL + '/-/v1/search',
+        serviceUrl: REGISTRY_URL + '/search',
         paramName: 'text',
         params: { size: SEARCH_SIZE },
         dataType: 'json',
