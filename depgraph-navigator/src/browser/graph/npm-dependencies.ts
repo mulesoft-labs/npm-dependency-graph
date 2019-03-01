@@ -28,9 +28,15 @@ export class NpmDependencyGraphGenerator implements IGraphGenerator {
     readonly index = new SModelIndex<SModelElementSchema>();
 
     generateNode(name: string, version?: string): DependencyGraphNodeSchema {
-        let node = this.index.getById(name) as DependencyGraphNodeSchema;
+        let artifactId;
+        if( version ){
+            artifactId= name+":"+version
+        }else{
+            artifactId= name
+        }
+        let node = this.index.getById(artifactId) as DependencyGraphNodeSchema;
         if (node === undefined) {
-            node = this.createNode(name);
+            node = this.createNode(artifactId);
             this.nodes.push(node);
             this.index.add(node);
         }

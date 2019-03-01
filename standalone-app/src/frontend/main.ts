@@ -63,7 +63,7 @@ jQuery(() => {
         transformResult: (response, query) => {
             const suggestions = response.objects.map((entry: any) => {
                 return <AutocompleteSuggestion>{
-                    value: entry.package.name,
+                    value: entry.package.name+":"+entry.package.version,
                     data: entry
                 }
             });
