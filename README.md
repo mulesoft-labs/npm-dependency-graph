@@ -6,6 +6,8 @@
 
 This project renders dependency graphs of maven artifacts. It uses the repository index associated to a maven repository to obtain dependencies metadata, [sprotty](https://github.com/theia-ide/sprotty) for rendering the graphs, and [ELK](https://www.eclipse.org/elk/) for automatic layout. It can be run either as a standalone application with a simple web page or as a [Theia](https://www.theia-ide.org) extension. Theia supports both the web browser and [Electron](https://electronjs.org).
 
+Current version only run againt a local service. Implementation of the service, as well as RAML API can be found at the [dependency graph service](https://github.com/mulesoft-labs/dependency-graph-service)
+
 ### Building
 
 You need [Yarn](https://yarnpkg.com/) in order to build this project.
