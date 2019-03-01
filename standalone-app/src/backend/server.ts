@@ -18,7 +18,7 @@ app.use(express.static('app'))
 //---------------------------------------------------------
 // Set up a proxy to the npm registry to avoid CORS
 app.get('/registry/*', (inReq, inRes) => {
-    const outReq = http.request({ host: 'localhost:8081', path: getPath(inReq) }, outRes => {
+    const outReq = http.request({ host: '0.0.0.0', port:8081, path: getPath(inReq) }, outRes => {
         inRes.contentType(outRes.headers['content-type'] || 'application/json');
         inRes.status(outRes.statusCode || 200);
         outRes.on('data', chunk => {
@@ -45,7 +45,7 @@ const getPath = (request: express.Request) => {
         path += encodeURIComponent(param) + '=' + encodeURIComponent(request.query[param]);
         paramCount++;
     }
-    return path;
+    return "/api/index/artifact"+path;
 }
 
 //---------------------------------------------------------
